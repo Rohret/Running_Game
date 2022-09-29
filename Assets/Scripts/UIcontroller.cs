@@ -2,15 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 public class UIcontroller : MonoBehaviour
 {
 
 
     PlayerMovement player;
-    Text distanceText;
-    Text coinText;
-    Text HighScore;
+    public TextMeshProUGUI distanceText;
+    public TextMeshProUGUI coinText;
+    public TextMeshProUGUI HighScore;
+    //Text distanceText;
+    //Text coinText;
+    //Text HighScore;
     private int HighScoreATM = 0;
     private Animator animator;
     coinScript coinScript;
@@ -20,9 +23,9 @@ public class UIcontroller : MonoBehaviour
     {
         player = GameObject.Find("Player").GetComponent<PlayerMovement>();
         animator = GetComponent<Animator>();
-        coinText = GameObject.Find("Coins").GetComponent<Text>();
-        distanceText = GameObject.Find("Distance").GetComponent<Text>();
-        HighScore = GameObject.Find("HighScore").GetComponent<Text>();
+        //coinText = GameObject.Find("Coins").GetComponent<Text>();
+        //distanceText = GameObject.Find("Distance").GetComponent<Text>();
+        //HighScore = GameObject.Find("HighScore").GetComponent<Text>();
         Application.targetFrameRate = Screen.currentResolution.refreshRate;
         HighScoreATM = PlayerPrefs.GetInt("HighScore",0);
         HighScore.text =  "High Score " + HighScoreATM.ToString();

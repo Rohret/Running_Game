@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     private BoxCollider2D boxCollider;
     Health health;
     GameManager gamemanager;
+    static public bool shoes = false;
 
     void Start()
     {
@@ -33,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
        boxCollider = GetComponent<BoxCollider2D>();
        health = gameObject.GetComponent<Health>();
        gamemanager = GameObject.Find("GameManager").GetComponent<GameManager>();
+       animator.SetBool("Shoes", shoes);
 
     }
 
@@ -63,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(velocity.x < 40)
+        if(velocity.x < 15)
         {
             animator.SetTrigger("SlowSpeed");
         }
@@ -186,4 +188,6 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f,jumpLayer);
         return raycastHit.collider != null;
     }
+
+
 }

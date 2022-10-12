@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -17,14 +18,42 @@ public class PlayerMovement : MonoBehaviour
     public float maxJumpTime = 2;
     public bool holdingJump = false;
     public float holdingJumpTimer = 0;
-    private Animator animator;
+    public Animator animator;
     public float gravityScale = 0;
     [SerializeField] GameObject m_LandingDust;
     private bool dustFlag = false;
     private BoxCollider2D boxCollider;
     Health health;
     GameManager gamemanager;
+    TriggerHeaven triggerHeaven;
+    StoneScript stone1;
+    StoneScript stone2;
+    StoneScript stone3;
+    [SerializeField] GameObject StoneObject1;
+    [SerializeField] GameObject StoneObject2;
+    [SerializeField] GameObject StoneObject3;
     static public bool shoes = false;
+    public bool startFlying = false;
+    public bool onFloor = false;
+    public GameObject cam1;
+    public GameObject cam2;
+    [SerializeField] CinemachineVirtualCamera groundCam;
+    [SerializeField] CinemachineVirtualCamera transferCam;
+    [SerializeField] private AudioSource coinAudioSource;
+    public float jumpToHeavenTimer = 0;
+    [SerializeField] private float jumpToHeavenMaxTimer = 5;
+    public bool jumpedToHeaven = false;
+    public float rotz = 0;
+    [SerializeField] private float rotationSpeed;
+    public bool startToUseAirMovement = false;
+    public float StartGroundDistance;
+    public float GroundDistance;
+    public bool sgrounddist = false;
+    public bool onTheWayDown = false;
+    public float onTheWayDownTimer = 0;
+    public bool allowWallsToSpawn = true;
+    public bool allowEnemySpawn = false;
+
 
     void Start()
     {
@@ -35,30 +64,102 @@ public class PlayerMovement : MonoBehaviour
        health = gameObject.GetComponent<Health>();
        gamemanager = GameObject.Find("GameManager").GetComponent<GameManager>();
        animator.SetBool("Shoes", shoes);
-
+       stone1 = StoneObject1.GetComponent<StoneScript>();
+       stone2 = StoneObject2.GetComponent<StoneScript>();
+       stone3 = StoneObject3.GetComponent<StoneScript>();
+       coinScript.numberOfCoins = 0;
+       triggerHeaven = GameObject.Find("TriggerHeaven").GetComponent<TriggerHeaven>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && isGrounded())
+        if (onTheWayDown && onTheWayDownTimer < 1)
+        {
+            velocity.x = 0;
+            onTheWayDownTimer += Time.deltaTime;
+            stone1.stoneSpeed = 3f;
+            stone2.stoneSpeed = 3f;
+            stone3.stoneSpeed = 3f;
+
+        }
+        if (onTheWayDownTimer > 1)
+        {
+            onTheWayDown = false;
+            allowWallsToSpawn = true;
+            onTheWayDownTimer = 0;
+            triggerHeaven.happenOnlyOnce = true;
+        }
+        if (!sgrounddist)
+        {
+            StartGroundDistance = distance;
+            sgrounddist = true;
+        }
+        if (!startFlying)
+        {
+            GroundDistance = distance - StartGroundDistance;
+        }
+
+        if (GroundDistance > 100 && onFloor)
+        {
+            if (!startFlying)
+            {
+                StartToFly();
+                startFlying = true;
+                allowWallsToSpawn = false;
+                allowEnemySpawn = true;
+                //GroundDistance = 0;
+
+            }
+            if (jumpToHeavenTimer> jumpToHeavenMaxTimer && !jumpedToHeaven)
+            {
+                rb.velocity = Vector2.up * jumpHeight * 1.5f;
+                jumpedToHeaven = true;
+                
+            }
+            if(jumpToHeavenTimer < 10) { jumpToHeavenTimer += Time.deltaTime; }
+            
+
+            if (rotz > -90 && jumpToHeavenTimer > 3.5f)
+            {
+                rotz += -Time.deltaTime * rotationSpeed;
+                transform.rotation = Quaternion.Euler(0, 0, rotz);
+            }
+
+
+            stone1.stoneSpeed = 0f;
+            stone2.stoneSpeed = 0f;
+            stone3.stoneSpeed = 0f;
+            if(jumpToHeavenTimer < 5)
+            {
+                velocity.x = 0;
+            }
+            
+        }
+        if (Input.GetMouseButtonDown(0) && isGrounded() && !startFlying)
         {
             jumped = true;
             holdingJump = true;
             dustFlag = true;
-            
+            onFloor = false;
 
 
 
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !startFlying)
         {
             
             holdingJump = false;
             SetGravityToStandad();
             
         }
+        if (isGrounded())
+        {
+           
+        }
+
+        
     }
 
 
@@ -67,16 +168,20 @@ public class PlayerMovement : MonoBehaviour
     {
         if(velocity.x < 15)
         {
+            
             animator.SetTrigger("SlowSpeed");
+            animator.SetBool("EnoughSpeed", false);
         }
         else
         {
+           
+            animator.SetBool("EnoughSpeed", true);
             animator.SetTrigger("FastSpeed");
         }
 
 
         animator.SetBool("Grounded", isGrounded());
-        rb.SetRotation(0);
+        //rb.SetRotation(0);
         if (jumped && isGrounded())
         {
             rb.velocity = Vector2.up * jumpHeight;
@@ -133,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if(collision.gameObject.tag == "Ground")
         {
-
+            onFloor = true;
             if (dustFlag)
             {
                 ActivateDust();
@@ -146,8 +251,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetGravityToStandad()
     {
+        if (!startFlying)
+        {
+            rb.gravityScale = gravityScale;
+        }
         
-        rb.gravityScale = gravityScale;
     }
 
     private void ActivateDust()
@@ -159,35 +267,57 @@ public class PlayerMovement : MonoBehaviour
 
     public void ObstacleHit()
     {
-        animator.SetTrigger("Dammaged");
-        if (health.numOfHearts >= 2)
+        if (!startFlying)
         {
-           health.numOfHearts -= 1;
-        }
-        else
-        {
-            health.numOfHearts -= 1;
-            gamemanager.GameOver();
-        }
-        
-        if (velocity.x >= 30)
-        {
-            velocity.x = velocity.x - 30;
+            animator.SetTrigger("Dammaged");
+            if (health.numOfHearts >= 2)
+            {
+                health.numOfHearts -= 1;
+            }
+            else
+            {
+                health.numOfHearts -= 1;
+                gamemanager.GameOver();
+            }
 
+            if (velocity.x >= 30)
+            {
+                velocity.x = velocity.x - 30;
+
+            }
+            else
+            {
+                velocity.x = 0;
+            }
         }
-        else
-        {
-            velocity.x = 0;
-        }
-        
 
     }
 
     private bool isGrounded()
     {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f,jumpLayer);
+        
+        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.5f,jumpLayer);
         return raycastHit.collider != null;
+       
     }
+
+    private void StartToFly()
+    {
+        groundCam.Priority = 1;
+        transferCam.Priority = 2;
+        rb.freezeRotation = false;
+        rb.gravityScale = 0;
+        animator.SetBool("Flying", true);
+        animator.SetTrigger("StartToFly");
+        
+        
+    }
+
+    public void playCoinSound()
+    {
+        coinAudioSource.Play();
+    }
+
 
 
 }

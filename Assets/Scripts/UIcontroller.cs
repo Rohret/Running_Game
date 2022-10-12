@@ -16,8 +16,7 @@ public class UIcontroller : MonoBehaviour
     //Text HighScore;
     private int HighScoreATM = 0;
     private Animator animator;
-    coinScript coinScript;
-    public int score;
+    private int score;
 
     private void Awake()
     {
@@ -27,6 +26,8 @@ public class UIcontroller : MonoBehaviour
         //distanceText = GameObject.Find("Distance").GetComponent<Text>();
         //HighScore = GameObject.Find("HighScore").GetComponent<Text>();
         Application.targetFrameRate = Screen.currentResolution.refreshRate;
+        // uncomment to reset highscore
+        //PlayerPrefs.SetInt("HighScore", 0);
         HighScoreATM = PlayerPrefs.GetInt("HighScore",0);
         HighScore.text =  "High Score " + HighScoreATM.ToString();
         

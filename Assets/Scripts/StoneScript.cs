@@ -7,7 +7,7 @@ public class StoneScript : MonoBehaviour
 
     PlayerMovement player;
     private bool positive = true;
-    public float stoneSpeed = 1f;
+    public float stoneSpeed = 3f;
     public float immuneTimer;
     public bool vulnerable;
    // public GameObject platform;
@@ -16,7 +16,8 @@ public class StoneScript : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<PlayerMovement>();
-       // platform = GameObject.Find("Ground").GetComponent<Platform>();
+        stoneSpeed = 3f;
+        // platform = GameObject.Find("Ground").GetComponent<Platform>();
 
     }
 

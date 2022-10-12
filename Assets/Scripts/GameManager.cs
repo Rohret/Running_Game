@@ -121,12 +121,19 @@ public class GameManager : MonoBehaviour
 
     public void RealGameover()
     {
-        
+        //uncomment if app should have 0 highscore
+        //PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
         AdCanvas.SetActive(false);
         gameOverCanvas.SetActive(true);
         textAnimActivate = true;
         Time.timeScale = 0;
         NumberOfAdsCounter = 0;
+        //print(startPos.x);
+        //print(startPos.y);
+        //print(startPos.z);
+
+
     }
 
     public void Rewarded()
@@ -153,13 +160,13 @@ public class GameManager : MonoBehaviour
     public void Replay()
     {
        SceneManager.LoadScene(1);
-       coinScript.numberOfCoins = 0;
+       //coinScript.numberOfCoins = 0;
     }
 
     public void ChangeToMainMenu()
     {
         SceneManager.LoadScene(0);
-        coinScript.numberOfCoins = 0;
+        //coinScript.numberOfCoins = 0;
     }
 
     public void deleteAllWalls()

@@ -14,7 +14,9 @@ public class Platform : MonoBehaviour
     
     private void FixedUpdate()
     {
+        
         float realVelocity = player.velocity.x / 3;
+        
         Vector2 pos = transform.position;
 
 
@@ -27,4 +29,6 @@ public class Platform : MonoBehaviour
 
         transform.position = pos;
     }
+
+
 }

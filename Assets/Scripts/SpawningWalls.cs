@@ -8,11 +8,12 @@ public class SpawningWalls : MonoBehaviour
     [SerializeField] private float maxTime;
     [SerializeField] private float timer = 0;
     [SerializeField] private float height;
+    PlayerMovement player;
     public GameObject Walls;
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GameObject.Find("Player").GetComponent<PlayerMovement>();
     }
 
     // Update is called once per frame
@@ -25,6 +26,14 @@ public class SpawningWalls : MonoBehaviour
             Destroy(newWalls, 10);
             timer = 0;
         }
-        timer += Time.deltaTime;
+        if (player.allowWallsToSpawn)
+        {
+            timer += Time.deltaTime;
+        }
+        else
+        {
+            timer = 0;
+        }
+        
     }
 }

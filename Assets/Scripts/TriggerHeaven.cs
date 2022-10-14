@@ -8,6 +8,8 @@ public class TriggerHeaven : MonoBehaviour
     Rigidbody2D player;
     PlayerMovement pl;
     public bool happenOnlyOnce = true;
+    public GameObject arrow;
+    ArrowUI au;
     [SerializeField] CinemachineVirtualCamera HeavenCamera;
     //public Rigidbody2D player;
     // Start is called before the first frame update
@@ -16,6 +18,7 @@ public class TriggerHeaven : MonoBehaviour
         //player = GameObject.Find("Player").GetComponent<Rigidbody2D>();
         player = GameObject.Find("Player").GetComponent<Rigidbody2D>();
         pl = player.GetComponent<PlayerMovement>();
+        au = arrow.GetComponent<ArrowUI>();
     }
 
     // Update is called once per frame
@@ -30,6 +33,8 @@ public class TriggerHeaven : MonoBehaviour
                 HeavenCamera.Priority = 3;
                 pl.startToUseAirMovement = true;
                 happenOnlyOnce = false;
+                au.decitvateUIarrow();
+                
 
             }
         }

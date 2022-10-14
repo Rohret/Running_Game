@@ -44,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpToHeavenMaxTimer = 5;
     public bool jumpedToHeaven = false;
     public float rotz = 0;
-    [SerializeField] private float rotationSpeed;
+    public float rotationSpeed;
     public bool startToUseAirMovement = false;
     public float StartGroundDistance;
     public float GroundDistance;
@@ -53,6 +53,10 @@ public class PlayerMovement : MonoBehaviour
     public float onTheWayDownTimer = 0;
     public bool allowWallsToSpawn = true;
     public bool allowEnemySpawn = false;
+    public bool zeroVelocity = false;
+    public bool bugFlag = true;
+    public bool arrowUpCoinActivated = false;
+    public bool allowSpawnOfSkyUp = true;
 
 
     void Start()
@@ -100,7 +104,9 @@ public class PlayerMovement : MonoBehaviour
             GroundDistance = distance - StartGroundDistance;
         }
 
-        if (GroundDistance > 100 && onFloor)
+        //if (GroundDistance > 100 && onFloor)
+        //{
+        if (arrowUpCoinActivated && onFloor)
         {
             if (!startFlying)
             {
@@ -132,7 +138,12 @@ public class PlayerMovement : MonoBehaviour
             stone3.stoneSpeed = 0f;
             if(jumpToHeavenTimer < 5)
             {
+                zeroVelocity = true;
                 velocity.x = 0;
+            }
+            else if(bugFlag)
+            {
+                zeroVelocity = false;
             }
             
         }
@@ -192,8 +203,10 @@ public class PlayerMovement : MonoBehaviour
 
         if (!isGrounded())
         {
+            
             if (holdingJump) 
             {
+               
                 rb.gravityScale = 0;
                 holdingJumpTimer += Time.fixedDeltaTime;
                 if (holdingJumpTimer >= maxJumpTime)
@@ -204,7 +217,9 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
+                
                 SetGravityToStandad();
+                
             }
 
         }
@@ -216,20 +231,24 @@ public class PlayerMovement : MonoBehaviour
 
         //if (grounded)
         //{
-            //animator.SetTrigger("Landing");
+        //animator.SetTrigger("Landing");
+        if (!zeroVelocity)
+        {
             float velocityRatio = velocity.x / maxVelocity;
             acceleration = maxAcceleartion * (1 - velocityRatio);
 
 
             velocity.x += acceleration * Time.fixedDeltaTime;
 
-            if(velocity.x >= maxVelocity)
+            if (velocity.x >= maxVelocity)
             {
                 velocity.x = maxVelocity;
             }
-        //}
+            //}
 
-        distance += (velocity.x * Time.fixedDeltaTime)/5;
+            distance += (velocity.x * Time.fixedDeltaTime) / 5;
+        }
+
         
     }
 

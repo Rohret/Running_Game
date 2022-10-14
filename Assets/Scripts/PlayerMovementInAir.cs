@@ -22,6 +22,10 @@ public class PlayerMovementInAir : MonoBehaviour
     [SerializeField] private float VelocityTimer;
     public GameObject Walls;
     private Vector3 startPos;
+    public float goingDownTimer = 0;
+    private float zrotation = -90;
+    private bool noPressAreAllowed = false;
+    private bool activateWalls = true;
 
     void Start()
     {
@@ -51,41 +55,77 @@ public class PlayerMovementInAir : MonoBehaviour
             }
         }
 
-        if(flyingDistance > 30)
+        if(flyingDistance > 150)
         {
-            
-            //reset everything from start
-            flyingDistance = 0;
-            PM.velocity.x = 0;
-            PM.rotz = 0;
-            PM.allowEnemySpawn = false;
-            PM.startToUseAirMovement = false;
-            PM.startFlying = false;
-            PM.sgrounddist = false;
-            PM.jumpedToHeaven = false;
-            PM.jumpToHeavenTimer = 0;
-            sflydist = false;
-            start = false;
-            onceFlag = true;
-            rb.gravityScale = 15;
-            groundCam.Priority = 4;
+            PM.allowSpawnOfSkyUp = true;
+            PM.bugFlag = false;
+            noPressAreAllowed = true;
             transferCam.Priority = 3;
             heavenCam.Priority = 1;
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-            ToGround();
-            PM.animator.SetBool("Flying", false);
-            PM.onTheWayDown = true;
-            flyingDistance = 0;
-            GameObject newWalls = Instantiate(Walls);
-            newWalls.transform.position = new Vector3(startPos.x, startPos.y - 1, startPos.z);
-            Destroy(newWalls, 10);
-            GameObject newWalls1 = Instantiate(Walls);
-            newWalls1.transform.position = new Vector3(startPos.x + 3, startPos.y - 1, startPos.z);
-            Destroy(newWalls1, 10);
-            GameObject newWalls2 = Instantiate(Walls);
-            newWalls2.transform.position = new Vector3(startPos.x + 6, startPos.y - 1, startPos.z);
-            Destroy(newWalls2, 10);
-            PM.animator.SetTrigger("GroundedFromSpace");
+            groundCam.Priority = 2;
+            rb.gravityScale = 1;
+            PM.velocity.x = 0;
+            PM.zeroVelocity = true;
+
+            goingDownTimer += Time.deltaTime;
+            if (zrotation < 0)
+            {
+                
+                zrotation += Time.deltaTime * PM.rotationSpeed;
+                transform.rotation = Quaternion.Euler(0, 0, zrotation);
+            }
+            if (activateWalls)
+            {
+                GameObject newWalls = Instantiate(Walls);
+                newWalls.transform.position = new Vector3(startPos.x, startPos.y - 1, startPos.z);
+                Destroy(newWalls, 10);
+                GameObject newWalls1 = Instantiate(Walls);
+                newWalls1.transform.position = new Vector3(startPos.x + 3, startPos.y - 1, startPos.z);
+                Destroy(newWalls1, 10);
+                GameObject newWalls2 = Instantiate(Walls);
+                newWalls2.transform.position = new Vector3(startPos.x + 6, startPos.y - 1, startPos.z);
+                Destroy(newWalls2, 10);
+                activateWalls = false;
+
+            }
+
+            if (goingDownTimer > 3)
+            {             
+                //reset everything from start
+                flyingDistance = 0;
+                PM.velocity.x = 0;
+                PM.rotz = 0;
+                PM.allowEnemySpawn = false;
+                PM.startToUseAirMovement = false;
+                PM.startFlying = false;
+                PM.sgrounddist = false;
+                PM.jumpedToHeaven = false;
+                PM.jumpToHeavenTimer = 0;
+                sflydist = false;
+                start = false;
+                onceFlag = true;
+                //rb.gravityScale = 15;
+                //rb.velocity = Vector2.down * jumpHeight * 1.5f;
+                groundCam.Priority = 3;
+                transferCam.Priority = 2;
+                heavenCam.Priority = 1;
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+                ToGround();
+                PM.animator.SetBool("Flying", false);
+                PM.onTheWayDown = true;
+                flyingDistance = 0;
+
+                PM.animator.SetTrigger("GroundedFromSpace");
+                goingDownTimer = 0;
+                zrotation = -90;
+                noPressAreAllowed = false;
+                start = false;
+                jumped = false;
+                PM.zeroVelocity = false;
+                PM.bugFlag = true;
+                activateWalls = true;
+            }
+
         }
 
     }
@@ -93,7 +133,7 @@ public class PlayerMovementInAir : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (PM.startToUseAirMovement)
+        if (PM.startToUseAirMovement && !noPressAreAllowed)
         {
             if (jumped && !start)
             {
@@ -109,6 +149,8 @@ public class PlayerMovementInAir : MonoBehaviour
             if(flyingDistance > 20 && onceFlag)
             {
                 PM.GroundDistance = 0;
+                PM.arrowUpCoinActivated = false;
+                PM.allowSpawnOfSkyUp = false;
                 onceFlag = false;
             }
 
@@ -126,7 +168,7 @@ public class PlayerMovementInAir : MonoBehaviour
     private void OnBecameInvisible()
     {
         
-        if (start && PM.startToUseAirMovement)
+        if (start && !noPressAreAllowed)
         {
             gamemanager.GameOver();
         }
@@ -135,8 +177,10 @@ public class PlayerMovementInAir : MonoBehaviour
 
     public void ObstacleHitInAir()
     {
-     
-            //animator.SetTrigger("Dammaged");
+
+        //animator.SetTrigger("Dammaged");
+        if (!noPressAreAllowed)
+        {
             if (health.numOfHearts >= 2)
             {
                 health.numOfHearts -= 1;
@@ -146,7 +190,7 @@ public class PlayerMovementInAir : MonoBehaviour
                 health.numOfHearts -= 1;
                 gamemanager.GameOver();
             }
-        
+        }
 
     }
 

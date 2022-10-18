@@ -57,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
     public bool bugFlag = true;
     public bool arrowUpCoinActivated = false;
     public bool allowSpawnOfSkyUp = true;
+    private float ScreenCalc;
 
 
     void Start()
@@ -75,6 +76,15 @@ public class PlayerMovement : MonoBehaviour
        stone3 = StoneObject3.GetComponent<StoneScript>();
        coinScript.numberOfCoins = 0;
        triggerHeaven = GameObject.Find("TriggerHeaven").GetComponent<TriggerHeaven>();
+        ScreenCalc = (float)Screen.height / (float)Screen.width;
+        print(Screen.width);
+        print(Screen.height);
+        print(ScreenCalc);
+        if (ScreenCalc > 0.68)
+        {
+            print("ipad");
+            transform.position = new Vector3(gameObject.transform.position.x+2, gameObject.transform.position.y, gameObject.transform.position.z);
+        }
     }
 
     // Update is called once per frame

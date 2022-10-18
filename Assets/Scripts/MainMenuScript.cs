@@ -11,6 +11,7 @@ public class MainMenuScript : MonoBehaviour
     public GameObject SpeakerOFF;
     float HighScoreATM;
     public Slider VolumeSlide;
+    private float ScreenCalc;
     void Start()
     {
         VolumeSlide.value = PlayerPrefs.GetFloat("SoundVolume", 0.5f);
@@ -26,6 +27,26 @@ public class MainMenuScript : MonoBehaviour
         else
         {
             VolumeSlider(VolumeSlide.value);
+        }
+
+
+        //var identifier = SystemInfo.deviceModel;
+        //if (identifier.StartsWith("iPad"))
+        //{
+        //    print("Ipad");
+        //}
+        //else
+        //{
+        //    print("Inte Ipad");
+        //    print(identifier);
+        //}
+        ScreenCalc = (float)Screen.height / (float)Screen.width;
+        print(Screen.width);
+        print(Screen.height);
+        print(ScreenCalc);
+        if(ScreenCalc > 0.68)
+        {
+            print("ipad");
         }
         
     }

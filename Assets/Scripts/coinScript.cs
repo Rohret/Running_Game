@@ -16,13 +16,16 @@ public class coinScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Destroy(gameObject,15);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        player.playCoinSound();
-        numberOfCoins += 1;
-        gameObject.SetActive(false);
+        if (collision.CompareTag("Player"))
+        {
+            player.playCoinSound();
+            numberOfCoins += 1;
+            gameObject.SetActive(false);
+        }
     }
 }

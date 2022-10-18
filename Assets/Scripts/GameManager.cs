@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.Advertisements;
+using System;
+
 public class GameManager : MonoBehaviour
 {
     public GameObject gameOverCanvas;
@@ -14,6 +16,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI CopyCoin;
     public TextMeshProUGUI CopyDistance;
+    public TextMeshProUGUI AdtimerText;
     PlayerMovement player;
     public Health health;
     public AfterAdWall afterAdWall;
@@ -27,6 +30,11 @@ public class GameManager : MonoBehaviour
     public float startGameAfterAd = 10;
     [SerializeField] RewardedAdsButton rewardedAdsButton;
     public static int NumberOfAdsCounter = 0;
+    private bool startAdTimer = false;
+    private float AdTimer = 3;
+    public float startTimeScaled = 0;
+    public float startTimeScaled1 = 0;
+
 
     // Start is called before the first frame update
     void Start()
@@ -38,12 +46,33 @@ public class GameManager : MonoBehaviour
         AdCanvas.SetActive(false);
         Time.timeScale = 1;
         textAnimActivate = false;
-        
+        AdtimerText.enabled = false;
+
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        if (startAdTimer)
+        {
+            
+            if (Time.unscaledDeltaTime < 1)
+            {
+                AdTimer -= Time.unscaledDeltaTime;
+            }
+           
+            AdtimerText.text = ((int)Math.Ceiling(AdTimer)).ToString();
+
+
+            if (AdTimer < 0)
+            {
+                startAdTimer = false;
+                AdtimerText.enabled = false;
+                AdTimer = 3;
+                
+            }
+        }
 
         CopyCoin.text = coinScript.numberOfCoins.ToString() + "x20";
         CopyDistance.text = ((int)player.distance).ToString();
@@ -86,7 +115,12 @@ public class GameManager : MonoBehaviour
 
         if (timerAfterAdStart)
         {
-            timerAfterAd += Time.unscaledDeltaTime;
+            if (Time.unscaledDeltaTime < 1)
+            {
+                timerAfterAd += Time.unscaledDeltaTime;
+            }
+            
+            print(timerAfterAd);
             if (timerAfterAd > startGameAfterAd)
             {
                 timerAfterAdStart = false;
@@ -138,14 +172,30 @@ public class GameManager : MonoBehaviour
 
     public void Rewarded()
     {
-        
-        deleteAllWalls();
-        health.numOfHearts = 2;
-        AdCanvas.SetActive(false);
-        timerAfterAdStart = true;
-        player.transform.position = new Vector3(startPos.x, startPos.y, startPos.z);
-        afterAdWall.spawnWallAfterAd();
-        player.velocity.x = 20;
+        AdtimerText.enabled = true;
+        startAdTimer = true;
+        startTimeScaled = Time.unscaledDeltaTime;
+        print("startTimeScaled:");
+        print(startTimeScaled);
+        if (!player.startToUseAirMovement)
+        {
+            deleteAllWalls();
+            health.numOfHearts = 2;
+            AdCanvas.SetActive(false);
+            timerAfterAdStart = true;
+            player.transform.position = new Vector3(startPos.x, startPos.y, startPos.z);
+            afterAdWall.spawnWallAfterAd();
+            player.velocity.x = 20;
+            print("now");
+        }
+        else
+        {
+            health.numOfHearts = 2;
+            AdCanvas.SetActive(false);
+            timerAfterAdStart = true;
+            player.transform.position = new Vector3(-6.522749f, 48.2459f, 0f);
+
+        }
        
     }
 

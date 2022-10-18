@@ -1052,10 +1052,10 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.71, y: 1.15}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8665661250530270857
@@ -1136,10 +1136,10 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.73, y: 1.22}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8665661250530275659
@@ -2286,8 +2286,36 @@ MonoBehaviour:
   maxJumpTime: 0.5
   holdingJump: 0
   holdingJumpTimer: 0
+  animator: {fileID: 0}
   gravityScale: 10
   m_LandingDust: {fileID: 9076098953984712191, guid: 0b745be9abb3a6d4dadd8705950196d1, type: 3}
+  StoneObject1: {fileID: 0}
+  StoneObject2: {fileID: 0}
+  StoneObject3: {fileID: 0}
+  startFlying: 0
+  onFloor: 0
+  cam1: {fileID: 0}
+  cam2: {fileID: 0}
+  groundCam: {fileID: 0}
+  transferCam: {fileID: 0}
+  coinAudioSource: {fileID: 0}
+  jumpToHeavenTimer: 0
+  jumpToHeavenMaxTimer: 5
+  jumpedToHeaven: 0
+  rotz: 0
+  rotationSpeed: 0
+  startToUseAirMovement: 0
+  StartGroundDistance: 0
+  GroundDistance: 0
+  sgrounddist: 0
+  onTheWayDown: 0
+  onTheWayDownTimer: 0
+  allowWallsToSpawn: 1
+  allowEnemySpawn: 0
+  zeroVelocity: 0
+  bugFlag: 1
+  arrowUpCoinActivated: 0
+  allowSpawnOfSkyUp: 1
 --- !u!114 &8665661250884691400
 MonoBehaviour:
   m_ObjectHideFlags: 0

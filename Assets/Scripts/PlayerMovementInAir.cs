@@ -55,8 +55,15 @@ public class PlayerMovementInAir : MonoBehaviour
             }
         }
 
-        if(flyingDistance > 150)
+        if(flyingDistance > 230)
         {
+            PM.animator.SetTrigger("FlyTransfer");
+            
+        }
+
+        if(flyingDistance > 250)
+        {
+            
             PM.allowSpawnOfSkyUp = true;
             PM.bugFlag = false;
             noPressAreAllowed = true;
@@ -66,6 +73,8 @@ public class PlayerMovementInAir : MonoBehaviour
             rb.gravityScale = 1;
             PM.velocity.x = 0;
             PM.zeroVelocity = true;
+
+
 
             goingDownTimer += Time.deltaTime;
             if (zrotation < 0)
@@ -89,10 +98,11 @@ public class PlayerMovementInAir : MonoBehaviour
 
             }
 
-            if (goingDownTimer > 3)
+            if (goingDownTimer > 2)
             {             
                 //reset everything from start
                 flyingDistance = 0;
+                PM.animator.ResetTrigger("FlyTransfer");
                 PM.velocity.x = 0;
                 PM.rotz = 0;
                 PM.allowEnemySpawn = false;

@@ -61,6 +61,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+       
+       shoes = (PlayerPrefs.GetInt("Shoes") != 0);
        rb = GetComponent<Rigidbody2D>();
        animator = GetComponent<Animator>();
        rb.gravityScale = gravityScale;
@@ -78,6 +80,14 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(gameObject.transform.position.y < 2)
+        {
+            animator.SetTrigger("Undermeters");
+        }
+        else
+        {
+            animator.ResetTrigger("Undermeters");
+        }
         if (onTheWayDown && onTheWayDownTimer < 1)
         {
             velocity.x = 0;

@@ -24,6 +24,7 @@ public class ArrowUI : MonoBehaviour
             {
                 gameObject.SetActive(false);
                 timerArrowActive = false;
+                timerArrow = 0;
             }
         }
     }

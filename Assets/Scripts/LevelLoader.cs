@@ -7,10 +7,21 @@ public class LevelLoader : MonoBehaviour
 {
    
     public Slider slider;
+    private bool pressedPlay;
+
+    private void Start()
+    {
+        pressedPlay = false;
+    }
 
     public void LoadLevel()
     {
-        StartCoroutine(LoadAsynchronously());
+        if (!pressedPlay)
+        { 
+
+            pressedPlay = true;
+            StartCoroutine(LoadAsynchronously());
+        }
     }
 
     IEnumerator LoadAsynchronously()
@@ -23,7 +34,7 @@ public class LevelLoader : MonoBehaviour
             
             float progress = Mathf.Clamp01(operation.progress/0.9f);
             slider.value = progress;
-            Debug.Log(progress);
+            //Debug.Log(progress);
             yield return null;
         }
     }

@@ -58,6 +58,7 @@ public class PlayerMovement : MonoBehaviour
     public bool arrowUpCoinActivated = false;
     public bool allowSpawnOfSkyUp = true;
     private float ScreenCalc;
+    public bool iPad = false;
 
 
     void Start()
@@ -77,14 +78,21 @@ public class PlayerMovement : MonoBehaviour
        coinScript.numberOfCoins = 0;
        triggerHeaven = GameObject.Find("TriggerHeaven").GetComponent<TriggerHeaven>();
         ScreenCalc = (float)Screen.height / (float)Screen.width;
-        print(Screen.width);
-        print(Screen.height);
-        print(ScreenCalc);
+        //print(Screen.width);
+        //print(Screen.height);
+        //print(ScreenCalc);
         if (ScreenCalc > 0.68)
         {
-            print("ipad");
+            //print("ipad");
+            iPad = true;
             transform.position = new Vector3(gameObject.transform.position.x+2, gameObject.transform.position.y, gameObject.transform.position.z);
         }
+        else
+        {
+            iPad = false;
+        }
+        PlayerPrefs.SetInt("NumberOfRuns", PlayerPrefs.GetInt("NumberOfRuns", 0) + 1);
+        //PlayerPrefs.GetInt("TotalScore", 0);
     }
 
     // Update is called once per frame
@@ -167,12 +175,13 @@ public class PlayerMovement : MonoBehaviour
             }
             
         }
-        if (Input.GetMouseButtonDown(0) && isGrounded() && !startFlying)
+        if (Input.GetMouseButtonDown(0) && isGrounded() && !startFlying && !holdingJump)
         {
             jumped = true;
             holdingJump = true;
             dustFlag = true;
             onFloor = false;
+           
 
 
 
@@ -210,11 +219,12 @@ public class PlayerMovement : MonoBehaviour
             animator.SetTrigger("FastSpeed");
         }
 
-
+        
         animator.SetBool("Grounded", isGrounded());
         //rb.SetRotation(0);
         if (jumped && isGrounded())
         {
+            
             rb.velocity = Vector2.up * jumpHeight;
             jumped=false;
            
@@ -245,10 +255,20 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            jumped = false;
-            holdingJumpTimer = 0;
-        }
+            if (!holdingJump)
+            {
+                
+                jumped = false;
+                holdingJumpTimer = 0;
+            }
+            //else
+            //{
+               
+            //   holdingJumpTimer += Time.fixedDeltaTime;
+            //}
 
+        }
+       // Debug.Log(holdingJumpTimer);
         //if (grounded)
         //{
         //animator.SetTrigger("Landing");
@@ -336,7 +356,12 @@ public class PlayerMovement : MonoBehaviour
     {
         
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.5f,jumpLayer);
-        return raycastHit.collider != null;
+        if(rb.gravityScale != 0)
+        {
+            return raycastHit.collider != null;
+        }
+        return false;
+        
        
     }
 

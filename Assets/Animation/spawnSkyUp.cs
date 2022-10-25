@@ -40,8 +40,8 @@ public class spawnSkyUp : MonoBehaviour
         if (timer > theTimer)
         {
             GameObject newSkyUp = Instantiate(SkyUp);
-            SkyUp.transform.position = transform.position + new Vector3(0, 0, 0);
-            Destroy(SkyUp, 10);
+            newSkyUp.transform.position = transform.position + new Vector3(0, 0, 0);
+            Destroy(newSkyUp, 20);
             timer = 0;
         }
         if (player.allowSpawnOfSkyUp)

@@ -17,7 +17,7 @@ public class UIcontroller : MonoBehaviour
     //Text HighScore;
     private int HighScoreATM = 0;
     private Animator animator;
-    private int score;
+    public int score;
     private bool activeTimer = false;
 
     private void Awake()
@@ -47,6 +47,7 @@ public class UIcontroller : MonoBehaviour
         distanceText.text = distance + " m";
         coinText.text = coinScript.numberOfCoins + " coins";
         ScoreText.text = "Score " + score;
+        
         if (HighScoreATM < score)
         {
             HighScore.text = "High Score " + score;

@@ -34,6 +34,16 @@ public class BulletScript : MonoBehaviour
 
             
         }
+        if (collision.gameObject.tag == "Shield")
+        {
+
+
+            GameObject effect = Instantiate(HitEffect, transform.position, Quaternion.identity);
+            Destroy(effect, 0.3f);
+            Destroy(gameObject);
+
+
+        }
 
 
     }

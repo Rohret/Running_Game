@@ -26,6 +26,11 @@ public class PlayerMovementInAir : MonoBehaviour
     private float zrotation = -90;
     private bool noPressAreAllowed = false;
     private bool activateWalls = true;
+    public bool imortalInAir = false;
+    public float imortalInAirTimer = 0;
+    public float imortalInAirTimerMax = 3;
+    public bool respawned = false;
+    public GameObject Shield;
 
     void Start()
     {
@@ -34,6 +39,8 @@ public class PlayerMovementInAir : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
         gamemanager = GameObject.Find("GameManager").GetComponent<GameManager>();
         health = gameObject.GetComponent<Health>();
+        imortalInAirTimer = 0;
+        respawned = false;
     }
 
     // Update is called once per frame
@@ -172,6 +179,19 @@ public class PlayerMovementInAir : MonoBehaviour
             }
 
         }
+        if (respawned)
+        {
+            imortalInAir = true;
+            imortalInAirTimer += Time.fixedDeltaTime;
+            Shield.SetActive(true);
+            if (imortalInAirTimer > imortalInAirTimerMax)
+            {
+                imortalInAir = false;
+                respawned = false;
+                Shield.SetActive(false);
+                imortalInAirTimer = 0;
+            }
+        }
     }
 
 
@@ -189,7 +209,7 @@ public class PlayerMovementInAir : MonoBehaviour
     {
 
         //animator.SetTrigger("Dammaged");
-        if (!noPressAreAllowed)
+        if (!noPressAreAllowed && !imortalInAir)
         {
             if (health.numOfHearts >= 2)
             {

@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI CopyDistance;
     public TextMeshProUGUI AdtimerText;
     PlayerMovement player;
+    PlayerMovementInAir plair;
+    UIcontroller uicontroller;
+    
     public Health health;
     public AfterAdWall afterAdWall;
     public float TimerToScore = 0;
@@ -41,6 +44,8 @@ public class GameManager : MonoBehaviour
     {
         
         player = GameObject.Find("Player").GetComponent<PlayerMovement>();
+        plair = GameObject.Find("Player").GetComponent<PlayerMovementInAir>();
+        uicontroller = GameObject.Find("Canvas").GetComponent<UIcontroller>();
         startPos = player.transform.position;
         gameOverCanvas.SetActive(false);
         AdCanvas.SetActive(false);
@@ -63,8 +68,11 @@ public class GameManager : MonoBehaviour
             }
            
             AdtimerText.text = ((int)Math.Ceiling(AdTimer)).ToString();
-
-
+            if (player.startToUseAirMovement)
+            {
+                plair.Shield.SetActive(true);
+            }
+            
             if (AdTimer < 0)
             {
                 startAdTimer = false;
@@ -120,7 +128,7 @@ public class GameManager : MonoBehaviour
                 timerAfterAd += Time.unscaledDeltaTime;
             }
             
-            print(timerAfterAd);
+            
             if (timerAfterAd > startGameAfterAd)
             {
                 timerAfterAdStart = false;
@@ -137,11 +145,11 @@ public class GameManager : MonoBehaviour
     {
         if(NumberOfAdsCounter == 0)
         {
-
+            NumberOfAdsCounter = 1;
             rewardedAdsButton.LoadAd();
             AdCanvas.SetActive(true);
             Time.timeScale = 0;
-            NumberOfAdsCounter = 1;
+            
 
         }
         else
@@ -155,6 +163,10 @@ public class GameManager : MonoBehaviour
 
     public void RealGameover()
     {
+        
+        
+        //print()
+        PlayerPrefs.SetInt("TotalScore", PlayerPrefs.GetInt("TotalScore", 0) + uicontroller.score);
         //uncomment if app should have 0 highscore
         //PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
@@ -175,25 +187,41 @@ public class GameManager : MonoBehaviour
         AdtimerText.enabled = true;
         startAdTimer = true;
         startTimeScaled = Time.unscaledDeltaTime;
-        print("startTimeScaled:");
-        print(startTimeScaled);
         if (!player.startToUseAirMovement)
         {
             deleteAllWalls();
             health.numOfHearts = 2;
             AdCanvas.SetActive(false);
             timerAfterAdStart = true;
-            player.transform.position = new Vector3(startPos.x, startPos.y, startPos.z);
+            if (!player.iPad)
+            {
+                player.transform.position = new Vector3(startPos.x, startPos.y, startPos.z);
+            }
+            else
+            {
+                player.transform.position = new Vector3(startPos.x+2, startPos.y, startPos.z);
+            }
+            
             afterAdWall.spawnWallAfterAd();
             player.velocity.x = 20;
-            print("now");
+           
         }
         else
         {
             health.numOfHearts = 2;
             AdCanvas.SetActive(false);
             timerAfterAdStart = true;
-            player.transform.position = new Vector3(-6.522749f, 48.2459f, 0f);
+            plair.respawned = true;
+            if (!player.iPad)
+            {
+                player.transform.position = new Vector3(-6.522749f, 48.2459f, 0f);
+            }
+            else
+            {
+                player.transform.position = new Vector3(-6.522749f+2, 48.2459f, 0f);
+               
+            }
+            
 
         }
        

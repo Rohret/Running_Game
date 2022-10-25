@@ -40,9 +40,9 @@ public class HeartSpawner : MonoBehaviour
     {
         if (timer > theTimer)
         {
-            GameObject newSkyUp = Instantiate(heartelem);
-            heartelem.transform.position = transform.position + new Vector3(0, 0, 0);
-            Destroy(heartelem, 20);
+            GameObject newheart = Instantiate(heartelem);
+            newheart.transform.position = transform.position + new Vector3(0, 0, 0);
+            Destroy(newheart, 20);
             timer = 0;
             firstToken = false;
         }

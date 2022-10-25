@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class MainMenuScript : MonoBehaviour
 {
@@ -12,10 +13,15 @@ public class MainMenuScript : MonoBehaviour
     float HighScoreATM;
     public Slider VolumeSlide;
     private float ScreenCalc;
+    private bool pressedPlay = false;
+    public TextMeshProUGUI TotalScore;
+    public TextMeshProUGUI TotalRuns;
     void Start()
     {
+        TotalRuns.text = "Number of runs " + PlayerPrefs.GetInt("NumberOfRuns", 0);
+        TotalScore.text = "Total score " + PlayerPrefs.GetInt("TotalScore", 0);
         VolumeSlide.value = PlayerPrefs.GetFloat("SoundVolume", 0.5f);
-        print((PlayerPrefs.GetInt("Sound") == 1));
+        //print((PlayerPrefs.GetInt("Sound") == 1));
         inGameToggle.GetComponent<Toggle>().isOn = (PlayerPrefs.GetInt("Shoes") != 0);
         HighScoreATM = PlayerPrefs.GetInt("HighScore", 0);
         SpeakerOFF.SetActive((PlayerPrefs.GetInt("Sound") == 1));
@@ -41,20 +47,21 @@ public class MainMenuScript : MonoBehaviour
         //    print(identifier);
         //}
         ScreenCalc = (float)Screen.height / (float)Screen.width;
-        print(Screen.width);
-        print(Screen.height);
-        print(ScreenCalc);
+        //print(Screen.width);
+        //print(Screen.height);
+        //print(ScreenCalc);
         if(ScreenCalc > 0.68)
         {
             print("ipad");
         }
+        pressedPlay = false;
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (HighScoreATM > 5000)
+        if (HighScoreATM > 5000 || PlayerPrefs.GetInt("TotalScore", 0) > 100000)
         {
             TextShoes.SetActive(false);
             inGameToggle.GetComponent<Toggle>().interactable = true;
@@ -80,12 +87,18 @@ public class MainMenuScript : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene(1);
+      //  if (!pressedPlay)
+      //  {
+            pressedPlay = true;
+            
+            SceneManager.LoadScene(1);
+       // }
+        
     }
 
     public void testClick()
     {
-        print("click");
+       
     }
 
     public void muteFunction()
@@ -112,10 +125,10 @@ public class MainMenuScript : MonoBehaviour
         
         if (!SpeakerOFF.activeInHierarchy)
         {
-            print("heere");
+            
             AudioListener.volume = volume;
             PlayerPrefs.SetFloat("SoundVolume", volume);
-            Debug.Log(volume);
+            
 
         }
         
